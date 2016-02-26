@@ -40,17 +40,15 @@ end
 
 def num_parser input
     p "pinged num"
-    if input[0].match(/^-?\+?\d+$/)
         indx = (input.index(',') or input.index(']'))
         num = input[0...indx]
-        if num.match(/^-?\+?\d+$/)
-            return num.to_i, input[indx..-1], true
-        elsif num.match(/^-?\+?\d+(\.\d+)?$/)
+        if num[/\.\d+/]
             return num.to_f, input[indx..-1], true
+        elsif num[/\d+/]
+            return num.to_i, input[indx..-1], true
         else
-            return "num fail"
+            "num fail"
         end
-    end 
 end
 
 def comma_parser input
