@@ -66,23 +66,20 @@ def array_parser input
     if input[0] == '['
         list = []
         input = input[1..-1]
-        while input!= nil and input != ']'
-            if input.length > 0
-                if input[0] == '['
-                    indx = input.index(']')
-                    list << array_parser(input[0..indx])
-                    input = input[(indx+1)..-1]
-                end
-                arr,rem = element_parser input
-                list << arr
-                p "arr is #{arr}"
-                p "rem is #{rem}"
-                array_parser input
-                input = rem
+        while input != nil and input.length > 0
+            if input[0] == '['
+                indx = input.index(']')
+                list << element_parser(input[0..indx])
+                input = input[(indx+1)..-1]
             end
+            arr,rem = element_parser input
+            list << arr unless arr == nil #and so null parser give empty output
+            p "arr is #{list}"
+            p "rem is #{input}"
+            input = rem
         end
         list.delete(",")
-        return list
+        return list, true 
     end
 end
 
