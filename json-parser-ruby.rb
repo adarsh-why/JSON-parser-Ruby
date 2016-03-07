@@ -120,8 +120,8 @@ def element_parser input
     return array_parser(input) if array_parser(input)
     return null_parser(input) if null_parser(input)
     return bool_parser(input) if bool_parser(input)
+    return string_parser(input) if string_parser(input)    
     return num_parser(input) if num_parser(input)
-    return string_parser(input) if string_parser(input)
 end
 
 
