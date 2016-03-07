@@ -1,4 +1,15 @@
+def space_parser input
+    if input == nil
+        return nil
+    else
+        first = input[/\S+/]
+        indx = input.index(first)
+        return input[indx..-1]
+    end    
+end
+
 def null_parser input
+    input = space_parser input
     if input[0..3] == 'null'
         return nil, input[4..-1]
     else
@@ -7,6 +18,7 @@ def null_parser input
 end
 
 def bool_parser input
+    input = space_parser input
     if input[0..3] == 'true'
         return true, input[4..-1]
     elsif input[0..4] == 'false'
@@ -17,6 +29,7 @@ def bool_parser input
 end
 
 def num_parser input
+    input = space_parser input
     if input.match(/\d+/)
         indx = (input.index(',') or input.index(']') or input.index('}'))
         num = input[0...indx]
@@ -30,7 +43,8 @@ def num_parser input
     end
 end
 
-def string_parser input    
+def string_parser input
+    input = space_parser input    
     if input[0] == '"'
         input = input[1..-1]
         indx = input.gsub('\"', '"').index('"')
@@ -41,12 +55,13 @@ def string_parser input
 end
 
 def array_parser input
+    input = space_parser input
     if input[0] == '['
         array = []
         input.slice!(0)
         while input.size > 0 and input[0] != ']'
             input.slice!(0) if input[0] == ','
-            if input[0] == '['
+            if space_parser(input)[0] == '['
                 indx = input.index(']')
                 array << array_parser(input)
                 input = input[(indx+1)..-1]
@@ -55,12 +70,12 @@ def array_parser input
                 array << object_parser(input[0..indx])
                 input = input[(indx+1)..-1]
             else
-            parsed, rem = element_parser input
-            break if rem == nil
-            array << parsed
-            rem.slice!(0)
-            input = rem
-        end
+                parsed, rem = element_parser input
+                break if rem == nil
+                array << parsed
+                rem.slice!(0)
+                input = rem
+            end
         end    
         return array
     else
@@ -69,24 +84,25 @@ def array_parser input
 end
 
 def object_parser input
+    input = space_parser input
     if input[0] == '{'
         hash = {}
         input.slice!(0)
         while input.size > 0 and input != '}'
+            input = space_parser input
             input.slice!(0) if input[0] == ','
-            p input
             key, rem = string_parser input
-            input = rem
+            input = space_parser rem
+            break if rem == nil
             input.slice!(0) if input[0] == ':'
-            if input[0] == '['
+            if space_parser(input)[0] == '['
                 indx = input.index(']')
                 value = array_parser(input[0..indx])
                 input = input[(indx+1)..-1]
-            elsif input[0] == '{'
+            elsif space_parser(input)[0] == '{'
                 indx = input.index('}')
                 value = object_parser(input[0..indx])
-                p "value is #{value}"
-                input = input = input[(indx+1)..-1]
+                input = input[(indx+1)..-1]
             else
                 value, rem = element_parser input
                 input = rem
@@ -96,7 +112,7 @@ def object_parser input
         end
         return hash
     else
-        nil
+        return nil
     end
 end
 
@@ -108,9 +124,11 @@ def element_parser input
     return string_parser(input) if string_parser(input)
 end
 
-while true
-    print "JSON>> "
-    input = gets.chomp
-    p array_parser(input) if input[0] == '['
-    p object_parser(input) if input[0] == '{'
-end
+
+input = '     {   "ad"   :
+   {  "ada" 
+    :  123  }  
+,  "bash"  :  [ 1 , 2 , 3 , [ 1 , 2 , 3 ] ]  }   ' 
+input = input.strip
+p array_parser(input) if input[0] == '['
+p object_parser(input) if input[0] == '{'
