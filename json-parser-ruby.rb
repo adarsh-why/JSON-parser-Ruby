@@ -125,10 +125,28 @@ def element_parser input
 end
 
 
-input = '     {   "ad"   :
-   {  "ada" 
-    :  123  }  
-,  "bash"  :  [ 1 , 2 , 3 , [ 1 , 2 , 3 ] ]  }   ' 
+input = '{
+    "glossary": {
+        "title": "example glossary",
+        "GlossDiv": {
+            "title": "S",
+            "GlossList": {
+                "GlossEntry": {
+                    "ID": "SGML",
+                    "SortAs": "SGML",
+                    "GlossTerm": "Standard Generalized Markup Language",
+                    "Acronym": "SGML",
+                    "Abbrev": "ISO 8879:1986",
+                    "GlossDef": {
+                        "para": "A meta-markup language, used to create markup languages such as DocBook.",
+                        "GlossSeeAlso": ["GML", "XML"]
+                    },
+                    "GlossSee": "markup"
+                }
+            }
+        }
+    }
+}' 
 input = input.strip
 p array_parser(input) if input[0] == '['
 p object_parser(input) if input[0] == '{'
