@@ -30,7 +30,7 @@ end
 
 def num_parser input
     input = space_parser input
-    if input.match(/\d+/)
+    if input[0].match(/\d+/)
         indx = (input.index(',') or input.index(']') or input.index('}'))
         num = input[0...indx]
         if num[/\.\d+/]
@@ -120,8 +120,8 @@ def element_parser input
     return array_parser(input) if array_parser(input)
     return null_parser(input) if null_parser(input)
     return bool_parser(input) if bool_parser(input)
-    return string_parser(input) if string_parser(input)    
     return num_parser(input) if num_parser(input)
+    return string_parser(input) if string_parser(input)
 end
 
 
