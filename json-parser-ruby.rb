@@ -60,11 +60,13 @@ def array_parser input
         array = []
         input.slice!(0)
         while input.size > 0 and input[0] != ']'
+            input = space_parser input
             input.slice!(0) if input[0] == ','
-            if space_parser(input)[0] == '['
+            if input[0] == '['
                 indx = input.index(']')
                 array << array_parser(input)
                 input = input[(indx+1)..-1]
+            
             elsif input[0] == '{'
                 indx = input.index('}')
                 array << object_parser(input[0..indx])
